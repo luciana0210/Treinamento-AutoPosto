@@ -1,57 +1,25 @@
-import React from 'react'
-
-function MeusModulos({ onVerModulo }) {
-  const modulos = [
-    { id: '01', titulo: 'Boas-vindas ao posto', tempo: '8 min', tipo: 'Vídeo + leitura', status: 'Concluído', classe: 'pill-done' },
-    { id: '02', titulo: 'Atendimento e vendas no caixa', tempo: '15 min', tipo: 'Vídeo + questionário', status: 'Concluído', classe: 'pill-done' },
-    { id: '03', titulo: 'Segurança no manuseio de combustíveis', tempo: '18 min', tipo: 'Vídeo + checklist prático', status: 'Concluído', classe: 'pill-done' },
-    { id: '04', titulo: 'Operação das bombas', tempo: '20 min', tipo: 'Vídeo + prática guiada', status: 'Em andamento', classe: 'pill-progress', ativo: true },
-    { id: '05', titulo: 'Normas de segurança e saúde (NR-20)', tempo: '22 min', tipo: 'Vídeo + avaliação', status: 'Bloqueado', classe: 'pill-locked' },
-    { id: '06', titulo: 'Fechamento de caixa e conferência', tempo: '12 min', tipo: 'Vídeo + questionário', status: 'Bloqueado', classe: 'pill-locked' },
-    { id: '07', titulo: 'Avaliação final e certificado', tempo: '15 min', tipo: 'Prova final', status: 'Bloqueado', classe: 'pill-locked' },
-  ]
-
-  return (
-    <div>
-      <div className="topline">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div className="ring" style={{ '--pct': 58 }}>
-            <div className="ring-inner">
-              <strong>58%</strong>
-              <span>concluído</span>
-            </div>
-          </div>
-          <div>
-            <span style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: '600' }}>Autoposto Rego & CIA</span>
-            <h1 style={{ marginTop: '4px' }}>Olá, Mateus!</h1>
-            <p style={{ color: 'var(--muted)', fontSize: '14.5px', marginTop: '4px' }}>
-              Você está no módulo 4 de 7. No seu ritmo — cada módulo leva de 10 a 20 minutos.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <h2 style={{ fontSize: '20px', marginTop: '36px' }}>Trilha de integração</h2>
-      
-      <div className="modules-list">
-        {modulos.map((mod) => (
-          <div key={mod.id} className="card module-item" style={{ borderLeft: mod.ativo ? '4px solid var(--accent)' : '1px solid var(--line)' }}>
-            <div className="module-details">
-              <div className="module-meta">{mod.id} · {mod.tempo} · {mod.tipo}</div>
-              <h3>{mod.titulo}</h3>
-            </div>
-            <div>
-              {mod.ativo ? (
-                <button className="btn btn-primary" onClick={onVerModulo}>Continuar</button>
-              ) : (
-                <span className={`pill ${mod.classe}`}>{mod.status}</span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+import { buscarMeusModulos } from '../services/api'
+import useConsulta from '../hooks/useConsulta'
+import EstadoConsulta from '../components/EstadoConsulta'
+const rotulos = { nao_iniciado: 'Não iniciado', em_andamento: 'Em andamento', concluido: 'Concluído', bloqueado: 'Bloqueado' }
+async function carregar() {
+  const dados = await buscarMeusModulos()
+  if (!Array.isArray(dados?.modulos) || !dados.resumo || !Number.isFinite(dados.resumo.progressoPercentual)) throw new Error('Resposta da trilha inválida.')
+  return dados
 }
-
-export default MeusModulos
+export default function MeusModulos({ usuario, onVerModulo }) {
+  const consulta = useConsulta(carregar)
+  if (!consulta.dados) return <EstadoConsulta consulta={consulta} />
+  const { resumo, modulos } = consulta.dados
+  return <div><div className="topline"><div className="resumo-trilha">
+    <div className="ring" style={{ '--pct': resumo.progressoPercentual }}><div className="ring-inner"><strong>{resumo.progressoPercentual}%</strong><span>concluído</span></div></div>
+    <div><p>{usuario.empresa?.nome}</p><h1>Olá, {usuario.nome}!</h1><p>{resumo.totalModulos} módulos na sua trilha{resumo.moduloAtualOrdem ? ` · Módulo atual: ${resumo.moduloAtualOrdem}` : ''}</p></div>
+  </div><button className="btn btn-ghost" onClick={consulta.recarregar}>Atualizar</button></div>
+  <h2>Trilha de integração</h2>
+  {!modulos.length && <p className="aviso">Nenhum módulo atribuído a você.</p>}
+  <div className="modules-list">{modulos.map(mod => <div key={mod.id} className="card module-item">
+    <div className="module-details"><div className="module-meta">{mod.ordem} · {mod.duracaoMinutos} min · {mod.tipo}</div><h3>{mod.titulo}</h3>
+      <span className={`pill ${mod.status === 'concluido' ? 'pill-done' : mod.status === 'em_andamento' ? 'pill-progress' : 'pill-locked'}`}>{rotulos[mod.status] || mod.status}</span></div>
+    {mod.status !== 'bloqueado' && <button className="btn btn-primary" onClick={() => onVerModulo(mod.id)}>{mod.status === 'concluido' ? 'Revisar' : mod.status === 'em_andamento' ? 'Continuar' : 'Abrir'}</button>}
+  </div>)}</div></div>
+}

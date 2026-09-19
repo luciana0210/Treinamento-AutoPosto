@@ -1,60 +1,43 @@
-import React from 'react'
+import { useState } from 'react'
+import { fazerLogin, solicitarRecuperacaoSenha } from '../services/api'
 
-function Login({ onLogin }) {
-  const handleSubmit = (e) => {
+export default function Login({ onLogin, aviso = '' }) {
+  const [recuperar, setRecuperar] = useState(false)
+  const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState('')
+  const [mensagem, setMensagem] = useState('')
+  async function enviar(e) {
     e.preventDefault()
-    onLogin() // Faz o login fictício e entra no app
+    if (ocupado) return
+    const campos = new FormData(e.currentTarget)
+    setOcupado(true); setErro(''); setMensagem('')
+    try {
+      const usuario = campos.get('usuario').trim()
+      if (!usuario) throw new Error('Informe seu e-mail ou usuário.')
+      if (recuperar) {
+        const dados = await solicitarRecuperacaoSenha(usuario)
+        if (!dados?.mensagem) throw new Error('Resposta de recuperação inválida.')
+        setMensagem(dados.mensagem)
+      } else {
+        const dados = await fazerLogin({ usuario, senha: campos.get('senha'), manterConectado: campos.has('manterConectado') })
+        if (!dados?.usuario?.id || !dados.usuario.nome) throw new Error('O servidor não retornou os dados do usuário.')
+        onLogin(dados.usuario)
+      }
+    } catch (e) { setErro(e.message) } finally { setOcupado(false) }
   }
-
-  return (
-    <div className="login-wrapper">
-      <div className="login-container">
-        <div className="login-info">
-          <h1>A rotina do posto, em módulos curtos.</h1>
-          <p style={{ marginBottom: '24px', opacity: 0.8 }}>
-            Atendimento, segurança no manuseio de combustíveis e operação de caixa — no seu ritmo, sem depender de alguém te acompanhando o tempo todo.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div><strong>7</strong> módulos na trilha</div>
-            <div><strong>~15 min</strong> por módulo</div>
-            <div><strong>NR-20</strong> conteúdo obrigatório</div>
-          </div>
-        </div>
-        
-        <div className="login-form-box card">
-          <h2 style={{ marginBottom: '8px' }}>Entrar</h2>
-          <p style={{ color: 'var(--muted)', fontSize: '14px', marginBottom: '24px' }}>
-            Use os dados enviados pelo seu gestor no primeiro dia.
-          </p>
-          
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>E-mail ou usuário</label>
-              <input type="text" placeholder="seu@email.com" required />
-            </div>
-            
-            <div className="form-group">
-              <label>Senha</label>
-              <input type="password" placeholder="••••••••" required />
-            </div>
-            
-            <div className="login-links">
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                <input type="checkbox" /> Manter conectado
-              </label>
-              <a href="#esqueceu">Esqueci minha senha</a>
-            </div>
-            
-            <button type="submit" className="btn btn-primary btn-block">Entrar</button>
-          </form>
-          
-          <p style={{ fontSize: '13px', color: 'var(--muted)', marginTop: '24px', textAlign: 'center' }}>
-            Primeiro acesso? <a href="#gestor" style={{ color: 'var(--ink)', fontWeight: '600' }}>Fale com seu gestor para receber o convite.</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  )
+  return <div className="login-wrapper"><div className="login-container">
+    <div className="login-info"><h1>A rotina do posto, em módulos curtos.</h1><p>Acesse sua trilha de treinamento e acompanhe seu progresso.</p></div>
+    <div className="login-form-box card"><h2>{recuperar ? 'Recuperar senha' : 'Entrar'}</h2>
+      {aviso && <p className="aviso" role="status">{aviso}</p>}
+      {erro && <p className="aviso erro" role="alert">{erro}</p>}
+      {mensagem && <p className="aviso sucesso" role="status">{mensagem}</p>}
+      <form onSubmit={enviar}><fieldset disabled={ocupado}>
+        <div className="form-group"><label htmlFor="usuario">E-mail ou usuário</label><input id="usuario" name="usuario" autoComplete="username" required /></div>
+        {!recuperar && <><div className="form-group"><label htmlFor="senha">Senha</label><input id="senha" name="senha" type="password" autoComplete="current-password" required /></div>
+          <label><input name="manterConectado" type="checkbox" /> Manter conectado</label></>}
+        <button className="btn btn-primary btn-block" type="submit">{ocupado ? 'Aguarde…' : recuperar ? 'Enviar instruções' : 'Entrar'}</button>
+        <button className="btn btn-ghost btn-block" type="button" onClick={() => { setRecuperar(!recuperar); setErro(''); setMensagem('') }}>{recuperar ? 'Voltar ao login' : 'Esqueci minha senha'}</button>
+      </fieldset></form>
+      <p>Primeiro acesso? Solicite seus dados de acesso ao gestor.</p>
+    </div></div></div>
 }
-
-export default Login

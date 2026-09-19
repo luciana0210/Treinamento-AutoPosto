@@ -1,16 +1,43 @@
-# React + Vite
+# Treinamento AutoPosto — frontend integrado
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Esta versão conecta as telas à API. Não contém servidor, login fictício, dados demonstrativos ou fallback de sucesso.
 
-Currently, two official plugins are available:
+## Executar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Instale as dependências com `npm ci`.
+2. Copie `.env.example` para `.env.local`.
+3. Em `.env.local`, ajuste `VITE_API_URL=http://localhost:8000/api` para o endereço do backend, incluindo o prefixo `/api`.
+4. Execute `npm run dev`. Reinicie o Vite se alterar a variável.
 
-## React Compiler
+Sem a variável, o endereço padrão é `/api` na mesma origem do site. Sem backend, a verificação de sessão e as operações exibem erros reais. Nenhuma credencial permite entrar sem confirmação do servidor.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## O que foi conectado
 
-## Expanding the ESLint configuration
+- Login com usuário, senha e opção de manter conectado.
+- Recuperação da sessão ao abrir a página e retorno ao login em HTTP 401.
+- Logout confirmado pelo servidor.
+- Solicitação de recuperação de senha.
+- Nome, cargo e empresa recebidos na autenticação.
+- Trilha, percentuais e módulos carregados da API.
+- Navegação pelo ID real do módulo selecionado.
+- Player de vídeo com URL recebida, sem player simulado.
+- Questionário e resultado retornado pelo servidor.
+- Checklist completo enviado por PUT e confirmado pelo servidor.
+- Solicitação de ajuda ao gestor com mensagem.
+- Painel e métricas carregados da API; menu disponível para perfil gestor.
+- Estados de carregamento, erro, vazio e repetição de consultas; bloqueio dos formulários durante envio.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Arquivos principais
+
+`src/services/api.js`: URLs e funções HTTP. Os imports já estão feitos nas telas.
+`CONTRATO-API.md`: métodos, caminhos, corpos e respostas esperadas.
+`.env.example`: modelo de configuração.
+
+Autenticação definida por cookie HttpOnly; o cliente usa `credentials: include`. O backend é responsável por autenticação, autorização, CORS, proteção CSRF e regras de treinamento. O frontend não calcula aprovação nem decide a liberação de módulos. O progresso da trilha é atualizado ao voltar do módulo.
+
+Não existe cadastro de usuários nesta interface. A recuperação apenas solicita instruções ao backend; o envio e a conclusão da redefinição devem ser implementados no serviço. Não há upload/administração de conteúdo, emissão de certificados ou rastreamento de tempo de vídeo.
+
+## Verificação
+
+`npm run build` e `npm run lint`.
+Testes de interação em DOM simulado (jsdom), com respostas HTTP controladas, passaram para login negado/aceito, carregamento de dados, seleção do módulo, questionário com erro e sucesso, checklist, ajuda, painel, logout, recuperação e falha de conexão. As respostas controladas existem apenas no teste externo, não no projeto entregue. O teste visual em navegador não foi realizado porque o download do navegador não ficou disponível neste ambiente. Não foi realizado teste com um backend real, pois nenhum foi fornecido.

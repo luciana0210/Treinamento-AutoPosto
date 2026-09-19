@@ -228,3 +228,18 @@ button{ font-family: inherit; cursor: pointer; }
   .sidebar-foot{ display: none; }
   .main{ padding: 24px 18px 48px; max-width: none; }
 }
+
+/* Estados de integração e formulários */
+fieldset { border: 0; padding: 0; margin: 16px 0; min-width: 0; }
+button:disabled, fieldset:disabled { opacity: .65; }
+button:disabled { cursor: wait; }
+.aviso { padding: 14px; margin: 16px 0; border-radius: 8px; background: var(--locked-bg); }
+.erro { background: #fbe4df; color: #85280d; }
+.sucesso { background: var(--done-bg); color: var(--done); }
+.resumo-trilha { display: flex; align-items: center; gap: 20px; }
+.video-player { width: 100%; margin: 16px 0; border-radius: 8px; background: #000; }
+textarea { width: 100%; min-height: 110px; font: inherit; padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.pergunta { margin-bottom: 24px; }
+.login-form-box .btn { margin: 8px 0; }
+.metrics-grid { margin-top: 24px; }
+@media (max-width: 880px) { .sidebar { flex-wrap: wrap; gap: 12px; } .nav { flex-wrap: wrap; } .nav-link span { display: inline; } }
