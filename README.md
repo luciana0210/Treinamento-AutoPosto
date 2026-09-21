@@ -1,43 +1,99 @@
-# Treinamento AutoPosto — frontend integrado
+# Treinamento AutoPosto
 
-Esta versão conecta as telas à API. Não contém servidor, login fictício, dados demonstrativos ou fallback de sucesso.
+Sistema de treinamento e capacitação de colaboradores para postos de combustíveis, composto por frontend em React (Vite) integrado a uma API REST em Node.js (Express + SQLite).
 
-## Executar
+---
 
-1. Instale as dependências com `npm ci`.
-2. Copie `.env.example` para `.env.local`.
-3. Em `.env.local`, ajuste `VITE_API_URL=http://localhost:8000/api` para o endereço do backend, incluindo o prefixo `/api`.
-4. Execute `npm run dev`. Reinicie o Vite se alterar a variável.
+## 🚀 Como Executar o Projeto
 
-Sem a variável, o endereço padrão é `/api` na mesma origem do site. Sem backend, a verificação de sessão e as operações exibem erros reais. Nenhuma credencial permite entrar sem confirmação do servidor.
+Abra dois terminais na raiz do projeto (um para o backend e outro para o frontend).
 
-## O que foi conectado
+### 1. Iniciar o Backend
 
-- Login com usuário, senha e opção de manter conectado.
-- Recuperação da sessão ao abrir a página e retorno ao login em HTTP 401.
-- Logout confirmado pelo servidor.
-- Solicitação de recuperação de senha.
-- Nome, cargo e empresa recebidos na autenticação.
-- Trilha, percentuais e módulos carregados da API.
-- Navegação pelo ID real do módulo selecionado.
-- Player de vídeo com URL recebida, sem player simulado.
-- Questionário e resultado retornado pelo servidor.
-- Checklist completo enviado por PUT e confirmado pelo servidor.
-- Solicitação de ajuda ao gestor com mensagem.
-- Painel e métricas carregados da API; menu disponível para perfil gestor.
-- Estados de carregamento, erro, vazio e repetição de consultas; bloqueio dos formulários durante envio.
+```bash
+cd backend
+npm ci
+npm run setup    # Cria o .env local com chave JWT e popula o banco SQLite com dados demo
+npm run dev      # Inicia o servidor com hot-reload na porta 3000 (ou npm start)
+```
 
-## Arquivos principais
+- **API disponível em:** `http://127.0.0.1:3000`
+- **Healthcheck:** `http://127.0.0.1:3000/api/health`
 
-`src/services/api.js`: URLs e funções HTTP. Os imports já estão feitos nas telas.
-`CONTRATO-API.md`: métodos, caminhos, corpos e respostas esperadas.
-`.env.example`: modelo de configuração.
+### 2. Iniciar o Frontend
 
-Autenticação definida por cookie HttpOnly; o cliente usa `credentials: include`. O backend é responsável por autenticação, autorização, CORS, proteção CSRF e regras de treinamento. O frontend não calcula aprovação nem decide a liberação de módulos. O progresso da trilha é atualizado ao voltar do módulo.
+Em outro terminal, a partir da raiz do projeto:
 
-Não existe cadastro de usuários nesta interface. A recuperação apenas solicita instruções ao backend; o envio e a conclusão da redefinição devem ser implementados no serviço. Não há upload/administração de conteúdo, emissão de certificados ou rastreamento de tempo de vídeo.
+```bash
+npm ci
+cp .env.example .env.local    # No Windows PowerShell: Copy-Item .env.example .env.local
+npm run dev
+```
 
-## Verificação
+- **Aplicação disponível em:** `http://localhost:5173/` (ou porta alternativa exibida no terminal, como `http://localhost:5174/`)
 
-`npm run build` e `npm run lint`.
-Testes de interação em DOM simulado (jsdom), com respostas HTTP controladas, passaram para login negado/aceito, carregamento de dados, seleção do módulo, questionário com erro e sucesso, checklist, ajuda, painel, logout, recuperação e falha de conexão. As respostas controladas existem apenas no teste externo, não no projeto entregue. O teste visual em navegador não foi realizado porque o download do navegador não ficou disponível neste ambiente. Não foi realizado teste com um backend real, pois nenhum foi fornecido.
+> **Nota sobre o proxy integrado:** O frontend já conta com proxy configurado em `vite.config.js` apontando `/api` para `http://127.0.0.1:3000`. Com `VITE_API_URL=/api`, você não precisa se preocupar com portas ou CORS durante o desenvolvimento local.
+
+---
+
+## 👥 Contas Demonstrativas para Teste
+
+Todas as contas abaixo utilizam a senha padrão: **`Demo@12345`**
+
+| E-mail | Perfil | Descrição / Estado |
+|---|---|---|
+| `admin@rego.local` | **ADMIN** | Gestão de administradores, gestores e painel |
+| `gestor@rego.local` | **GESTOR** | Painel da equipe e gestão de colaboradores |
+| `maria@rego.local` | **COLABORADOR** | Trilha inicial em andamento |
+| `pedro@rego.local` | **COLABORADOR** | Trilha com prazo vencido |
+| `joao@rego.local` | **COLABORADOR** | Trilha concluída e com certificado emitido |
+
+---
+
+## ⚙️ Configuração e Variáveis de Ambiente
+
+### Frontend (`.env.local`)
+```env
+# Recomendado: usa o proxy do Vite para evitar problemas de CORS e cookies
+VITE_API_URL=/api
+
+# Opcional (conexão direta):
+# VITE_API_URL=http://127.0.0.1:3000/api
+```
+
+### Backend (`backend/.env`)
+Gerado automaticamente pelo `npm run setup` com chave JWT segura.
+```env
+PORT=3000
+HOST=127.0.0.1
+NODE_ENV=development
+DATABASE_PATH=./data/treinamento.sqlite
+JWT_SECRET=<gerado_automaticamente>
+JWT_EXPIRES_IN=2h
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174
+```
+
+> **Flexibilidade de Origem:** Em modo `development`, o backend aceita automaticamente conexões locais provenientes de `localhost` e `127.0.0.1` em qualquer porta (`5173`, `5174`, etc.).
+
+---
+
+## 🧪 Testes e Verificação
+
+Para executar a suíte de testes de integração da API:
+
+```bash
+cd backend
+npm test
+```
+
+Os 12 testes do backend cobrem autenticação, isolamento de papéis, concorrência, reciclagem de ciclo, cálculo de progresso e regras de negócio com banco de dados isolado em memória temporária.
+
+---
+
+## 📁 Estrutura de Documentação
+
+- [Regras de Negócio e Roteiro Didático](docs/regras-de-negocio.md)
+- [Endpoints da API REST](docs/endpoints.md)
+- [Integração e Contrato Frontend-Backend](docs/integracao-backend.md)
+- [Estrutura do Banco de Dados SQLite](docs/banco-de-dados.md)
+- [Relatório de Verificação e Testes](docs/verificacao.md)
