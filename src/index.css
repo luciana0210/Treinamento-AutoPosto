@@ -1411,3 +1411,106 @@ button:disabled, fieldset:disabled {
     padding: 0 !important;
   }
 }
+
+/* ==========================================================================
+   ALERTAS E INDICADORES DE PRAZO
+   ========================================================================== */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+.pill-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+
+.deadline-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  border-radius: var(--radius);
+  background: #FFF5F5;
+  border: 1.5px solid #FCA5A5;
+  box-shadow: 0 4px 14px rgba(197, 48, 48, 0.08);
+}
+
+.deadline-alert-icon {
+  font-size: 26px;
+  line-height: 1;
+  padding: 8px;
+  border-radius: 10px;
+  background: #FEE2E2;
+  flex-shrink: 0;
+}
+
+.deadline-alert-content {
+  flex: 1;
+}
+
+.deadline-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.deadline-alert-tag {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--danger);
+  color: #FFFFFF;
+}
+
+.deadline-alert-date {
+  font-size: 12.5px;
+  color: #991B1B;
+  font-weight: 600;
+}
+
+.deadline-alert-content strong {
+  display: block;
+  font-size: 15.5px;
+  color: #7F1D1D;
+  margin-bottom: 4px;
+}
+
+.deadline-alert-content p {
+  font-size: 13.5px;
+  color: #5C1D1D;
+  line-height: 1.5;
+}
+
+.deadline-info-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  border-radius: var(--radius-pill);
+  background: #FAF8F4;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.deadline-info-icon {
+  font-size: 14px;
+}
+

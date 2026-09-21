@@ -55,7 +55,46 @@ export default function MeusModulos({ usuario, onVerModulo }) {
         <button className="btn btn-ghost" onClick={consulta.recarregar}>Atualizar</button>
       </div>
 
-      <h2>Trilha de integração</h2>
+      {/* Alerta de Prazo Vencido */}
+      {resumo.atrasado && (
+        <div className="deadline-alert card" role="alert">
+          <div className="deadline-alert-icon">⚠️</div>
+          <div className="deadline-alert-content">
+            <div className="deadline-alert-header">
+              <span className="deadline-alert-tag">Atenção: Prazo Vencido</span>
+              <span className="deadline-alert-date">
+                Expirou em {new Date(resumo.prazoLimite).toLocaleDateString('pt-BR')}
+              </span>
+            </div>
+            <strong>Sua trilha de capacitação está com o prazo de conclusão expirado.</strong>
+            <p>
+              Conforme as diretrizes operacionais do <strong>Autoposto Rego & CIA</strong>, a conclusão da capacitação é prioritária.
+              Você ainda pode acessar as aulas e realizar as avaliações normalmente para regularizar seu treinamento.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Indicador de Prazo em Dia */}
+      {!resumo.concluido && !resumo.atrasado && resumo.prazoLimite && (
+        <div className="deadline-info-bar">
+          <span className="deadline-info-icon">📅</span>
+          <span>
+            Prazo limite para conclusão: <strong>{new Date(resumo.prazoLimite).toLocaleDateString('pt-BR')}</strong>
+          </span>
+        </div>
+      )}
+
+      <div className="section-header">
+        <h2>Trilha de integração</h2>
+        {resumo.concluido ? (
+          <span className="pill pill-done">100% Concluída</span>
+        ) : resumo.atrasado ? (
+          <span className="pill pill-locked pill-danger">Atrasada</span>
+        ) : (
+          <span className="pill pill-progress">Em Andamento</span>
+        )}
+      </div>
       {!modulos.length && <p className="aviso">Nenhum módulo atribuído a você.</p>}
       
       <div className="modules-list">
