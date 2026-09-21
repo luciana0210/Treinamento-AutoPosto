@@ -26,8 +26,22 @@ export default function Login({ onLogin, aviso = '' }) {
     } catch (e) { setErro(e.message) } finally { setOcupado(false) }
   }
   return <div className="login-wrapper"><div className="login-container">
-    <div className="login-info"><h1>A rotina do posto, em módulos curtos.</h1><p>Acesse sua trilha de treinamento e acompanhe seu progresso.</p></div>
-    <div className="login-form-box card"><h2>{recuperar ? 'Recuperar senha' : 'Entrar'}</h2>
+    <div className="login-info">
+      <div className="login-brand">
+        <div className="brand-mark" />
+        <div>
+          <div className="brand-name">Autoposto Rego & CIA</div>
+          <div className="brand-sub">Portal de Treinamento & Capacitação</div>
+        </div>
+      </div>
+      <h1>A rotina do posto, em módulos curtos.</h1>
+      <p>Acesse sua trilha de treinamento operacional e acompanhe seu progresso.</p>
+    </div>
+    <div className="login-form-box card">
+      <div className="login-form-header">
+        <span className="login-tag">Autoposto Rego & CIA</span>
+        <h2>{recuperar ? 'Recuperar senha' : 'Entrar'}</h2>
+      </div>
       {aviso && <p className="aviso" role="status">{aviso}</p>}
       {erro && <p className="aviso erro" role="alert">{erro}</p>}
       {mensagem && <p className="aviso sucesso" role="status">{mensagem}</p>}

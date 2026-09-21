@@ -563,18 +563,45 @@ button:disabled, fieldset:disabled {
   margin-bottom: 24px;
 }
 
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.login-brand .brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.login-brand .brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.login-brand .brand-sub {
+  font-size: 12.5px;
+  color: #98A79A;
+  margin-top: 2px;
+}
+
 /* Badge de destaque de capacitação no login */
 .login-info::after {
-  content: '⛽ Capacitação Operacional & NR-20 • Treinamento Contínuo';
+  content: '⛽ Autoposto Rego & CIA • Capacitação Operacional & NR-20';
   display: inline-block;
   align-self: flex-start;
-  padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-pill);
   color: #E2EBE4;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.02em;
 }
 
@@ -586,9 +613,24 @@ button:disabled, fieldset:disabled {
   justify-content: center;
 }
 
+.login-form-header {
+  margin-bottom: 16px;
+}
+
+.login-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
 .login-form-box h2 {
   font-size: 24px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   color: var(--ink);
 }
 
