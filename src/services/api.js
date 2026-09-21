@@ -88,3 +88,9 @@ export function solicitarRecuperacaoSenha(usuario) {
 export function solicitarAjudaGestor(moduloId, mensagem) {
   return requisicao(`/modulos/${id(moduloId)}/ajuda`, { method: 'POST', body: { mensagem } })
 }
+
+// Busca dados completos do certificado emitido.
+export function buscarCertificado(certificadoId) {
+  return requisicao(`/certificates/${id(certificadoId)}`)
+}
+

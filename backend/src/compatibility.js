@@ -14,7 +14,7 @@ export function compatibility(req, res, next) {
     if (req.user.role !== 'COLABORADOR') return res.status(403).json({ error: 'Perfil sem permissão.' });
     const e = enrollmentFor(req.user.id), t = progress(e);
     const current = t.modules.find(m => !m.done && !m.locked);
-    return res.json({ resumo: { progressoPercentual: t.progress, moduloAtualId: current ? `${e.id}:${current.id}` : null, moduloAtualOrdem: current?.position || null, totalModulos: t.modules.length },
+    return res.json({ resumo: { progressoPercentual: t.progress, moduloAtualId: current ? `${e.id}:${current.id}` : null, moduloAtualOrdem: current?.position || null, totalModulos: t.modules.length, concluido: t.status === 'CONCLUIDO', certificado: t.certificate ? { id: t.certificate.id, emitidoEm: t.certificate.issued_at } : null },
       modulos: t.modules.map(m => ({ id: `${e.id}:${m.id}`, ordem: m.position, titulo: m.title, duracaoMinutos: m.duration_minutes, tipo: 'Leitura + avaliação', status: moduleStatus(m), ativo: m.id === current?.id })) });
   }
   if (url === '/equipe/painel' && req.method === 'GET') {
