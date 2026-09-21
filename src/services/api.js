@@ -16,7 +16,7 @@ async function requisicao(caminho, { method = 'GET', body, signal } = {}) {
     if (causa.name === 'AbortError') throw causa
     throw new Error(causa.name === 'TimeoutError' ? 'O servidor demorou para responder. Tente novamente.' : 'Não foi possível conectar ao servidor. Tente novamente mais tarde.', { cause: causa })
   }
-  if (resposta.status === 401 && caminho !== '/auth/login' && caminho !== '/auth/recuperar-senha') {
+  if (resposta.status === 401 && caminho !== '/auth/login' && caminho !== '/auth/recuperar-senha' && caminho !== '/auth/me') {
     window.dispatchEvent(new Event('sessao-expirada'))
   }
   if (resposta.status === 204) return null

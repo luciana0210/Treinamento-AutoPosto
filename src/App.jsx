@@ -14,7 +14,13 @@ export default function App() {
   const [saindo, setSaindo] = useState(false)
   useEffect(() => {
     let atual = true
-    const expirar = () => { setUsuario(null); setPagina('modulos'); setAviso('Entre para continuar.') }
+    const expirar = () => {
+      setUsuario(u => {
+        if (u) setAviso('Sua sessão expirou. Entre novamente para continuar.')
+        return null
+      })
+      setPagina('modulos')
+    }
     window.addEventListener('sessao-expirada', expirar)
     buscarUsuarioAtual().then(dados => {
       if (!dados?.usuario?.id || !dados.usuario.nome) throw new Error('Não foi possível recuperar os dados da sessão.')
