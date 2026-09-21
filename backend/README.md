@@ -29,14 +29,15 @@ Senha de todas: **Demo@12345**. São fictícias para execução acadêmica/local
 | pedro@rego.local | COLABORADOR, prazo vencido |
 | joao@rego.local | COLABORADOR, trilha concluída e certificado |
 
-## Conectar o frontend existente, quando necessário
+## Conectar o frontend existente
 
-O backend não exige alterações nos componentes React. Duas opções:
+O backend não exige alterações nos componentes React e se comunica nativamente com o frontend:
 
-1. Mesma origem: execute `npm ci` e `npm run build` na raiz, sem uma variável antiga de API no build (use `VITE_API_URL=/api`). O Express serve `dist/` em http://127.0.0.1:3000/ quando essa pasta existe.
-2. Desenvolvimento: configure apenas seu arquivo local `.env.local` da raiz com `VITE_API_URL=http://127.0.0.1:3000/api`, rode `npm run dev -- --host 127.0.0.1` na raiz e abra http://127.0.0.1:5173/. Use o mesmo hostname no frontend e na API, pois o cookie é SameSite=Strict. `.env.local` não é enviado ao Git. A porta 8000 do exemplo original deve ser substituída por 3000.
+1. **Desenvolvimento com proxy (Recomendado):** No arquivo `.env.local` da raiz, use `VITE_API_URL=/api`. O `vite.config.js` faz o proxy automático para `http://127.0.0.1:3000`. Isso elimina qualquer atrito com cookies `SameSite=Strict` ou conflitos de porta.
+2. **Desenvolvimento direto:** Se preferir apontar diretamente (`VITE_API_URL=http://127.0.0.1:3000/api`), em modo de desenvolvimento (`NODE_ENV=development`) o backend aceita dinamicamente conexões locais de `localhost` e `127.0.0.1` em qualquer porta (`5173`, `5174`, etc.).
+3. **Produção / Build local:** Execute `npm run build` na raiz. O Express serve a pasta `dist/` estática diretamente em `http://127.0.0.1:3000/`.
 
-Se usar outras portas, ajuste `CORS_ORIGINS` no `.env` do backend. O padrão permite localhost/127.0.0.1 nas portas 3000 e 5173. `HOST` é 127.0.0.1, `JWT_EXPIRES_IN` é 2h. `manterConectado:true` no login legado emite sessão e cookie de sete dias. Logout e inativação revogam ambas imediatamente. `NODE_ENV=production` exige HTTPS para cookie Secure.
+Para ambientes de produção reais, configure `CORS_ORIGINS` no `.env` com a lista exata dos domínios autorizados. `HOST` é 127.0.0.1, `JWT_EXPIRES_IN` é 2h. `manterConectado:true` no login legado emite sessão e cookie de sete dias. Logout e inativação revogam ambas imediatamente. `NODE_ENV=production` exige HTTPS para cookie Secure.
 
 ## Regras implementadas
 

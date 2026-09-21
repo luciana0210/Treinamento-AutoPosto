@@ -20,15 +20,36 @@ app.use(helmet({ contentSecurityPolicy: { directives: {
   'script-src': ["'self'"], 'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
   'font-src': ["'self'", 'https://fonts.gstatic.com'], 'upgrade-insecure-requests': null
 } }, strictTransportSecurity: config.production ? undefined : false }));
-app.use(cors({ origin(origin, callback) { callback(null, !origin || config.origins.includes(origin)); }, credentials: true }));
+export function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (config.origins.includes(origin)) return true;
+  if (!config.production) {
+    try {
+      const u = new URL(origin);
+      if ((u.hostname === 'localhost' || u.hostname === '127.0.0.1') && (u.protocol === 'http:' || u.protocol === 'https:')) {
+        return true;
+      }
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
+app.use(cors({ origin(origin, callback) { callback(null, isAllowedOrigin(origin)); }, credentials: true }));
 app.use(express.json({ limit: '32kb' }));
 app.use('/api', (req, res, next) => {
   const json = res.json.bind(res);
   res.json = body => json(body?.error ? { ...body, mensagem: body.error } : body);
   res.set('Cache-Control', 'no-store');
-  if (!['GET','HEAD','OPTIONS'].includes(req.method) &&
-    ((req.headers.origin && !config.origins.includes(req.headers.origin)) || req.headers['sec-fetch-site'] === 'cross-site')) {
-    return res.status(403).json({ error: 'Origem não permitida.' });
+  if (!['GET','HEAD','OPTIONS'].includes(req.method)) {
+    const origin = req.headers.origin;
+    if (origin && !isAllowedOrigin(origin)) {
+      return res.status(403).json({ error: 'Origem não permitida.' });
+    }
+    if (!origin && req.headers['sec-fetch-site'] === 'cross-site') {
+      return res.status(403).json({ error: 'Origem não permitida.' });
+    }
   }
   next();
 });
