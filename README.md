@@ -114,3 +114,4 @@ Os 12 testes do backend cobrem autenticação, isolamento de papéis, concorrên
 - [Integração e Contrato Frontend-Backend](docs/integracao-backend.md)
 - [Estrutura do Banco de Dados SQLite](docs/banco-de-dados.md)
 - [Relatório de Verificação e Testes](docs/verificacao.md)
+- [Guia de Testes Automatizados do Frontend](docs/testes-frontend.md)
