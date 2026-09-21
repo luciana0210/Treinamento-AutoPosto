@@ -79,7 +79,24 @@ CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,h
 
 ## 🧪 Testes e Verificação
 
-Para executar a suíte de testes de integração da API:
+### 1. Testes Unitários do Frontend (Vitest + Testing Library)
+Valida a lógica e comportamento dos componentes (`Login`, `MeusModulos`, `ModuloInterno`, `PainelEquipe`, `EstadoConsulta`):
+
+```bash
+npm run test:unit        # Execução única
+npm run test:unit:watch  # Modo contínuo com recarregamento em tempo real
+```
+
+### 2. Testes End-to-End (Playwright)
+Cobre os fluxos completos da plataforma em ambiente de navegador real (Login/Logout, Colaborador, Certificado, Prazo Vencido e Gestão):
+
+```bash
+# Certifique-se de que os servidores (backend e frontend) estejam rodando
+npm run test:e2e
+```
+
+### 3. Testes de Integração do Backend (Node.js Test Runner)
+Executa a suíte de testes de integração da API REST com SQLite em memória:
 
 ```bash
 cd backend
