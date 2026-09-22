@@ -59,7 +59,7 @@ const password = z.string().min(8).max(72).refine(s => Buffer.byteLength(s, 'utf
 const dueDate = z.iso.datetime({ offset: true }).transform(v => new Date(v).toISOString()).refine(v => Date.parse(v) > Date.now(), 'Prazo deve ser futuro.');
 const safeUser = u => ({ id: u.id, name: u.name, email: u.email, role: u.role, job_title: u.job_title, active: Boolean(u.active), last_activity_at: u.last_activity_at });
 const cookieOptions = { httpOnly: true, sameSite: 'strict', secure: config.production, path: '/api' };
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: 'draft-8', legacyHeaders: false,
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: config.production ? 30 : 1000, standardHeaders: 'draft-8', legacyHeaders: false,
   message: { error: 'Muitas tentativas de login. Tente novamente em 15 minutos.' } });
 const dummyHash = bcrypt.hashSync('comparacao-de-tempo-apenas', 12);
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
